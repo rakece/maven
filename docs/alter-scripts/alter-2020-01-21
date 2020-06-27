@@ -1,0 +1,20 @@
+CREATE TABLE `rcs_bot_publisher` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `company_name` varchar(128) NOT NULL,
+  `first_name` varchar(128) NOT NULL,
+  `last_name` varchar(128) DEFAULT NULL,
+  `email` varchar(128) NOT NULL,
+  `phone_number` varchar(128) NOT NULL,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `rcs_bot_user_id` bigint(20) NOT NULL,
+  `role` varchar(128) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`id`),
+   KEY `FK_rcs_bot_publisher_bot_id` (`rcs_bot_id`),
+   CONSTRAINT `FK_rcs_bot_publisher_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`),
+   KEY `FK_rcs_bot_publisher_user_id` (`rcs_bot_user_id`),
+   CONSTRAINT `FK_rcs_bot_publisher_user_id` FOREIGN KEY (`rcs_bot_user_id`) REFERENCES `rcs_bot_user` (`id`)
+);
+
+ALTER TABLE `rcs_bot` ADD COLUMN register_url varchar(128);

@@ -1,0 +1,306 @@
+DROP TABLE IF EXISTS `rcs_country_list`;
+CREATE TABLE `rcs_country_list` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `country_iso_name` varchar(128) NOT NULL,
+  `country_name` varchar(128) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+ );
+
+
+DROP TABLE IF EXISTS `rcs_bot_category`;
+CREATE TABLE `rcs_bot_category` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(128) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `image_name` varchar(128) NOT NULL DEFAULT 'default.png',
+   PRIMARY KEY (`id`)
+);
+
+
+DROP TABLE IF EXISTS `rcs_bot_category_desc`;
+CREATE TABLE `rcs_bot_category_desc` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_category_id` bigint(20) NOT NULL,
+  `display_name` varchar(128) NOT NULL,
+  `description` varchar(2048) DEFAULT NULL,
+  `lang` varchar(8) NOT NULL DEFAULT 'en_US',
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`id`),
+   KEY `FK_rcs_bot_category_desc_id` (`rcs_bot_category_id`),
+   CONSTRAINT `FK_rcs_bot_category_desc_id` FOREIGN KEY (`rcs_bot_category_id`) REFERENCES `rcs_bot_category` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_user`;
+CREATE TABLE `rcs_bot_user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_country_id` bigint(20) NOT NULL,
+  `mobile_no` varchar(128) NOT NULL DEFAULT 'notset',
+  `login_source` varchar(128) NOT NULL DEFAULT 'phone',
+  `email` varchar(128) DEFAULT NULL,
+  `verified_email` char(1) NOT NULL DEFAULT 'N',
+  `verified_phone` char(1) NOT NULL DEFAULT 'N',
+  `gps_location` varchar(128) DEFAULT NULL,
+  `lon` double DEFAULT '0',
+  `lat` double DEFAULT '0',
+  `alt_phone` varchar(128) DEFAULT NULL,
+  `password` varchar(128) NOT NULL,
+  `fname` varchar(128) DEFAULT NULL,
+  `lname` varchar(128) DEFAULT NULL,
+  `user_status` varchar(128) NOT NULL DEFAULT 'ACTIVE',
+  `user_type` varchar(128) NOT NULL DEFAULT 'notset',
+  `last_login_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `login_count` int DEFAULT '1',
+  `wrong_password_count` int NOT NULL DEFAULT '0',
+  `otp` varchar(128) DEFAULT NULL,
+  `lang` varchar(128) NOT NULL NULL DEFAULT 'en_US',
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `profile_image_name` varchar(128) NOT NULL DEFAULT 'default.png',
+  `company_name` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `mobile_no` (`mobile_no`),
+  KEY `FK_rcs_bot_user_rcs_country_id` (`rcs_country_id`),
+  CONSTRAINT `FK_rcs_bot_user_rcs_country_id` FOREIGN KEY (`rcs_country_id`) REFERENCES `rcs_country_list` (`id`)
+  );
+
+DROP TABLE IF EXISTS `rcs_bot`;
+CREATE TABLE `rcs_bot` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_category_id` bigint(20) NOT NULL,
+  `rcs_bot_user_id` bigint(20) NOT NULL,
+  `platform`     varchar(128) DEFAULT 'google',
+  `privacy_url`  varchar(128),
+  `website_url`  varchar(128),
+  `opt_in`  varchar(128),
+  `opt_in_url`  varchar(128),
+  `term_and_condition_url`  varchar(128),
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` varchar(128) NOT NULL DEFAULT 'inactive',
+  `logo_image_name` varchar(50) NOT NULL DEFAULT 'default.png',
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_rcs_bot_category_id` (`rcs_bot_category_id`),
+  CONSTRAINT `FK_rcs_bot_rcs_bot_category_id` FOREIGN KEY (`rcs_bot_category_id`) REFERENCES `rcs_bot_category` (`id`),
+  KEY `FK_rcs_bot_rcs_bot_user_id` (`rcs_bot_user_id`),
+  CONSTRAINT `FK_rcs_bot_rcs_bot_user_id` FOREIGN KEY (`rcs_bot_user_id`) REFERENCES `rcs_bot_user` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_desc`;
+CREATE TABLE `rcs_bot_desc` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `bot_name` varchar(128) NOT NULL,
+  `bot_summary` varchar(1024) NOT NULL,
+  `bot_feature` varchar(1024) NOT NULL,
+  `display_name` varchar(1024) NOT NULL,
+  `description` varchar(2048) DEFAULT NULL,
+  `lang` varchar(8) NOT NULL DEFAULT 'en_US',
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`id`),
+   KEY `FK_rcs_bot_bot_desc_id` (`rcs_bot_id`),
+   CONSTRAINT `FK_rcs_bot_bot_desc_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_tags`;
+CREATE TABLE `rcs_bot_tags` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id`  bigint(20) NOT NULL,
+  `rcs_bot_category_id`  bigint(20) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_tag_category_id` (`rcs_bot_category_id`),
+  CONSTRAINT `FK_rcs_bot_tag_category_id` FOREIGN KEY (`rcs_bot_category_id`) REFERENCES `rcs_bot_category` (`id`),
+  KEY `FK_rcs_bot_tag_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_tag_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_update_desc`;
+CREATE TABLE `rcs_bot_update_desc` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id`  bigint(20) NOT NULL,
+  `description` varchar(2048) DEFAULT NULL,
+  `lang` varchar(8) NOT NULL DEFAULT 'en_US',
+  `status` varchar(8128) NOT NULL DEFAULT 'inactive',
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_update_desc_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_update_desc_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`)
+);
+
+
+DROP TABLE IF EXISTS `rcs_bot_image`;
+CREATE TABLE `rcs_bot_image` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `image_name` varchar(128) NOT NULL DEFAULT 'default.png',
+  `description` varchar(4000) DEFAULT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` varchar(128) NOT NULL DEFAULT 'inactive',
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_image_rcs_bot_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_image_rcs_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_video`;
+CREATE TABLE `rcs_bot_video` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `video_name` varchar(128) NOT NULL DEFAULT 'default.mp4',
+  `description` varchar(2048) DEFAULT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` varchar(128) NOT NULL DEFAULT 'inactive',
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_video_rcs_bot_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_video_rcs_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`)
+);
+
+
+DROP TABLE IF EXISTS `rcs_bot_comment`;
+CREATE TABLE `rcs_bot_comment` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `rcs_bot_user_id` bigint(20) NOT NULL,
+  `commenttext` varchar(1024) DEFAULT NULL,
+  `status` varchar(200) DEFAULT 'inactive',
+  `rating` int NOT NULL DEFAULT '0',
+  `positive_count` int NOT NULL DEFAULT 0,
+  `negative_count` int NOT NULL DEFAULT 0,
+  `lang` varchar(8) NOT NULL DEFAULT 'en_US',
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_comment_rcs_bot_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_comment_rcs_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`)
+);
+
+
+DROP TABLE IF EXISTS `rcs_bot_userrole`;
+CREATE TABLE `rcs_bot_userrole` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_user_id` bigint(20) NOT NULL,
+  `user_role_type` varchar(128) NOT NULL DEFAULT 'ROLE_USER',
+  `role_description` varchar(128) NOT NULL DEFAULT 'user role',
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `valid_from` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `valid_to` timestamp NOT NULL DEFAULT '2038-01-18 21:44:07',
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_userrole_rcs_bot_user_id` (`rcs_bot_user_id`),
+  CONSTRAINT `FK_rcs_bot_userrole_rcs_bot_user_id` FOREIGN KEY (`rcs_bot_user_id`) REFERENCES `rcs_bot_user` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_available`;
+CREATE TABLE `rcs_bot_available` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `rcs_country_id` bigint(20) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_available_rcs_bot_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_available_rcs_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`),
+  KEY `FK_rcs_bot_available_rcs_country_id` (`rcs_country_id`),
+  CONSTRAINT `FK_rcs_bot_available_rcs_country_id` FOREIGN KEY (`rcs_country_id`) REFERENCES `rcs_country_list` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_billing`;
+CREATE TABLE `rcs_bot_billing` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `rcs_bot_user_id` bigint(20) NOT NULL,
+  `user_name` varchar(128)  NOT NULL,
+  `company_name` varchar(128)  NOT NULL,
+  `email` varchar(128)   NOT NULL,
+  `account_type` varchar(128)  NOT NULL,
+  `contact_no` varchar(128)   NOT NULL,
+  `alt_contact_no` varchar(128) DEFAULT NULL,
+  `address_line1` varchar(1024) NOT NULL,
+  `address_line2` varchar(1024),
+  `city` varchar(128) NOT NULL,
+  `state` varchar(128) NOT NULL,
+  `zip` varchar(128) NOT NULL,
+  `country` varchar(128) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_billing_rcs_bot_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_billing_rcs_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`),
+  KEY `FK_rcs_bot_billing_rcs_bot_user_id` (`rcs_bot_user_id`),
+  CONSTRAINT `FK_rcs_bot_billing_rcs_bot_user_id` FOREIGN KEY (`rcs_bot_user_id`) REFERENCES `rcs_bot_user` (`id`)
+  );
+
+DROP TABLE IF EXISTS `rcs_bot_type`;
+CREATE TABLE `rcs_bot_type` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `type` varchar(128)   NOT NULL,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `rcs_bot_category_id` bigint(20) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_type_rcs_bot_id` (`rcs_bot_id`),
+  CONSTRAINT `FK_rcs_bot_type_rcs_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`),
+  KEY `FK_rcs_bot_type_rcs_bot_category_id` (`rcs_bot_category_id`),
+  CONSTRAINT `FK_rcs_bot_type_rcs_bot_category_id` FOREIGN KEY (`rcs_bot_category_id`) REFERENCES `rcs_bot_category` (`id`)
+);
+
+
+DROP TABLE IF EXISTS `rcs_bot_type_desc`;
+CREATE TABLE `rcs_bot_type_desc` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(1024) NOT NULL,
+  `display_name` varchar(1024) NOT NULL,
+  `description` varchar(2048) NOT NULL,
+  `lang` varchar(128) NOT NULL DEFAULT 'en_US',
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_snap_number`;
+CREATE TABLE `rcs_bot_snap_number` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `snap_call_number` varchar(20) NOT NULL,
+  `snap_country_code` bigint(10) NOT NULL,
+  `snap_country_iso` varchar(10) NOT NULL,
+  `snap_number_desc` varchar(500) DEFAULT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (`id`),
+   KEY `FK_rcs_bot_snap_number_rcs_bot_id` (`rcs_bot_id`),
+   CONSTRAINT `FK_rcs_bot_snap_number_rcs_bot_id` FOREIGN KEY (`rcs_bot_id`) REFERENCES `rcs_bot` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_carrier`;
+CREATE TABLE `rcs_bot_carrier` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_country_id` bigint(20) NOT NULL,
+  `name` varchar(1024) NOT NULL,
+  `display_name` varchar(1024) NOT NULL,
+  `description` varchar(2048),
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_rcs_bot_carrier_rcs_country_id` (`rcs_country_id`),
+  CONSTRAINT `FK_rcs_bot_carrier_rcs_country_id` FOREIGN KEY (`rcs_country_id`) REFERENCES `rcs_country_list` (`id`)
+);
+
+DROP TABLE IF EXISTS `rcs_bot_carrier_mapping`;
+CREATE TABLE `rcs_bot_carrier_mapping` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `rcs_bot_carrier_id` bigint(20) NOT NULL,
+  `rcs_bot_id` bigint(20) NOT NULL,
+  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+);

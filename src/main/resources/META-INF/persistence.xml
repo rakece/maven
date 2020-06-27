@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+                            	
+	
+		
+    
+    
+    
+    
+    
+    
+    <persistence-unit name="com_mysql_cj_jdbc_Driver" transaction-type="JTA">
+                                                        			
+        
+        
+        
+        
+        
+        
+        <description>generated-persistence-unit</description>
+                                                        					
+        
+        
+        
+        
+        
+        
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotCategory</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotDesc</class>
+                                        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotTypeDesc</class>
+                        
+        
+        <class>com.kirusa.domain.RcsBotSnapNumber</class>
+        <class>com.kirusa.domain.RcsBotCarrier</class>
+                
+        <class>com.kirusa.domain.RcsBotCarrierMapping</class>
+                
+        <class>com.kirusa.domain.RcsBotVideo</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotCategoryDesc</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotImage</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotTags</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotComment</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotAvailable</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBot</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotUser</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotUpdateDesc</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotBilling</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsCountryList</class>
+                                                              			
+        
+        
+        
+        
+        
+        
+        <class>com.kirusa.domain.RcsBotUserrole</class>
+                                                           			
+        
+        
+        
+        
+        
+        
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+                                                        		
+    
+    
+    
+    
+    
+    
+    </persistence-unit>
+                            	
+
+
+
+
+
+
+
+</persistence>
